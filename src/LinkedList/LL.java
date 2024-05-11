@@ -158,4 +158,93 @@ public class LL {
 
         return resultHead;
     }
+
+    public Node CreateCyclicLL() {
+        Node a = new Node(1);
+        Node b = new Node(2);
+        Node c = new Node(3);
+        Node d = new Node(4);
+        Node e = new Node(5);
+        Node f = new Node(6);
+        Node g = new Node(7);
+        Node h = new Node(8);
+
+        a.next = b;
+        b.next = c;
+        c.next = d;
+        d.next = e;
+        e.next = f;
+        f.next = g;
+        g.next = h;
+        h.next = d;
+
+        return a;
+    }
+
+    public boolean IsLLCyclic(Node head) {
+        Node slow = head;
+        Node fast = head;
+
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+
+            if (fast.val == slow.val) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int GetCycleLength(Node head) {
+        Node slow = head;
+        Node fast = head;
+        int count = 0;
+
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            
+            if (fast.val == slow.val) {
+                break;
+            }
+        }
+
+        if (fast == null || fast.next == null) {
+            return count;
+        }
+
+        do {
+            slow = slow.next;
+            count++;
+        } while (slow.val != fast.val);
+
+        return count;
+    }
+
+    public Node FindCycleStart(Node head) {
+        int l = GetCycleLength(head);
+
+        if (l == 0) {
+            return null;
+        }
+
+        Node f = head;
+        Node s = head;
+
+        // move s by cycle length
+        while (l > 0) {
+            s = s.next;
+            l--;
+        }
+
+        // move both, will meet at start of the cycle.
+        while (f != s) {
+            f = f.next;
+            s = s.next;
+        }
+
+        return s;
+    }
 }

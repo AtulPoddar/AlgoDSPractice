@@ -16,7 +16,7 @@ public class MergeLL {
         head2.InsertFirst(1);
         head2.InsertFirst(1);
 
-        var resultHead = head1.MergeLL(head1.head, head2.head);
+        //var resultHead = head1.MergeLL(head1.head, head2.head);
 
     }
 }
