@@ -15,6 +15,6 @@ public class CyclicLL {
         var temp = obj.CreateCyclicLL();
         System.out.println(obj.IsLLCyclic(temp));
         System.out.println(obj.GetCycleLength(temp));
-        var s = obj.FindCycleStart(temp);
+        //var s = obj.FindCycleStart(temp);
     }
 }
