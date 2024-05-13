@@ -259,4 +259,51 @@ public class LL {
 
         return s;
     }
+
+    public Node LLMergeSort(Node head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        Node midNode = GetMid(head);
+
+        Node left = LLMergeSort(head);
+        Node right = LLMergeSort(midNode);
+
+        return merge(left, right);
+    }
+
+    private Node GetMid(Node head) {
+        Node midPrev = null;
+        while (head != null && head.next != null) {
+            midPrev = (midPrev == null) ? head : midPrev.next;
+            head = head.next.next;
+        }
+
+        Node mid = midPrev.next;
+        midPrev.next = null;
+        return mid;
+    }
+
+    private Node merge(Node left, Node right) {
+        Node dummyHead = new Node();
+        Node temp = dummyHead;
+
+        while (left != null && right != null) {
+            if (left.val <= right.val) {
+                temp.next = left;
+                left = left.next;
+                temp = temp.next;
+            }
+            else {
+                temp.next = right;
+                right = right.next;
+                temp = temp.next;
+            }
+        }
+
+        temp.next = left != null ? left : right;
+
+        return dummyHead.next;
+    }
 }
