@@ -4,6 +4,7 @@ public class LL {
     
     public Node head;
     public int size;
+    public Node tail;
 
     private class Node {
         int val;
@@ -26,6 +27,7 @@ public class LL {
         
         if (head == null) {
             head = newNode;
+            tail = newNode;
             size++;
             return;
         }
@@ -305,5 +307,87 @@ public class LL {
         temp.next = left != null ? left : right;
 
         return dummyHead.next;
+    }
+
+    public void BBSort() {
+        BBSortHelper(size-1, 0);
+    }
+
+    private void BBSortHelper(int row, int col) {
+        if (row == 0) {
+            return;
+        }
+
+        if (row > col) {
+            Node temp1 = Get(col);
+            Node temp2 = Get(col+1);
+            if (temp1.val > temp2.val) {
+                if (temp1 == head) {
+                    temp1.next = temp2.next;
+                    temp2.next = temp1;
+                    head = temp2;
+                }
+                else if (temp2 == tail) {
+                    Node prev = Get(col-1);
+                    prev.next = temp2;
+                    temp2.next = temp1;
+                    temp1.next = null;
+                    tail = temp1;
+                }
+                else {
+                    Node prev = Get(col-1);
+                    prev.next = temp2;
+                    temp1.next = temp2.next;
+                    temp2.next = temp1;
+                }
+            }
+
+            BBSortHelper(row, col+1);
+        }
+        else {
+            BBSortHelper(row-1, 0);
+        }
+    }
+
+    private Node Get(int index) {
+        Node temp = head;
+        while (temp != null && index > 0) {
+            temp = temp.next;
+            index--;
+        }
+
+        return temp;
+    }
+
+    // Recursive Reversal of Linked List
+    public void ReverseLL(Node node) {
+        if (node == tail) {
+            head = tail;
+            return;
+        }
+
+        ReverseLL(node.next);
+
+        tail.next = node;
+        tail = node;
+        tail.next = null;
+    }
+
+    // In place Reversal of Linked List
+    public void InPlaceReverse(Node node) {
+        Node prev = null;
+        Node pres = node;
+        Node next = pres.next;
+
+        while (pres != null) {
+            pres.next = prev;
+            prev = pres;
+            pres = next;
+            if (next != null) {
+                next = next.next;
+            }
+        }
+
+        head = prev;
     }
 }
