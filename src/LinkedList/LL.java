@@ -390,4 +390,36 @@ public class LL {
 
         head = prev;
     }
+
+    public void RevLL2(Node node, int left, int right) {
+        Node prev = null;
+        Node pres = node;
+
+        for (int i=0; pres!=null && i<left-1; i++) {
+            prev = pres;
+            pres = pres.next;
+        }
+
+        Node pivot1 = prev;
+        Node pivot2 = pres;
+        Node next = pres.next;
+
+        for (int i=0; pres!=null && i<right-left+1; i++) {
+            pres.next = prev;
+            prev = pres;
+            pres = next;
+            if (next != null) {
+                next = next.next;
+            }
+        }
+
+        if (pivot1 == null) {
+            head = prev;
+        }
+        else {
+            pivot1.next = prev;
+        }
+        
+        pivot2.next = pres;
+    }
 }
