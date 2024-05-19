@@ -422,4 +422,88 @@ public class LL {
         
         pivot2.next = pres;
     }
+
+    // Is LL Palindrome
+    public boolean IsPalindrome(Node node) {
+        Node headTemp = node;
+        Node mid = GetMidElement(node);
+        Node reverseHead = ReverseLinkList(mid);
+        Node midTemp = reverseHead;
+        
+        while (node != null && reverseHead != null) {
+            if (node.val != reverseHead.val) {
+                break;
+            }
+
+            node = node.next;
+            reverseHead = reverseHead.next;
+        }
+
+        // Join the LL back
+        Node midHead = ReverseLinkList(midTemp);
+        while (headTemp.next != null) {
+            headTemp = headTemp.next;
+        }
+        headTemp.next = midHead;
+
+        if (node == null || reverseHead == null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private Node GetMidElement(Node node) {
+        Node midPrev = null;
+
+        while (node != null && node.next != null) {
+            midPrev = (midPrev == null) ? node : midPrev.next;
+            node = node.next.next;
+        }
+
+        Node mid = midPrev.next;
+        midPrev.next = null;
+        return mid;
+    }
+
+    private Node ReverseLinkList(Node node) {
+        Node prev = null;
+        Node pres = node;
+        Node next = pres.next;
+
+        while (pres != null) {
+            pres.next = prev;
+            prev = pres;
+            pres = next;
+            if (next != null) {
+                next = next.next;
+            }
+        }
+
+        return prev;
+    }
+
+    // Input : 1->2->3->4->5->6->7
+    // Output : 1->7->2->6->3->5->4
+    public Node ReverseHop(Node node) {
+        // Get Mid element, reverse from mid
+        Node mid = GetMidElement(node);
+        Node reverseHead = ReverseLinkList(mid);
+
+        Node resultHead = new Node();
+        Node temp = resultHead;
+        while (node != null && reverseHead != null) {
+            temp.next = node;
+            node = node.next;
+            temp = temp.next;
+
+            temp.next = reverseHead;
+            reverseHead = reverseHead.next;
+            temp = temp.next;
+        }
+
+        temp.next = node != null ? node : reverseHead;
+        head = resultHead.next;
+        return head;
+    }
 }
