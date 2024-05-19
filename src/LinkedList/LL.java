@@ -506,4 +506,46 @@ public class LL {
         head = resultHead.next;
         return head;
     }
+
+    // Input : 1->2->3->4->5
+    // Output : 2->1->4->3->5
+    // If k=2
+    public Node ReverseKGroup(Node node, int k) {
+        int size = 0;
+        Node temp = node;
+        while (temp != null) {
+            size++;
+            temp = temp.next;
+        }
+
+        int groups = size / k;
+        Node prev = null;
+        Node pres = node;
+        Node next = pres.next;
+
+        for(int i=0; i<groups; i++) {
+            Node pivot1 = prev;
+            Node pivot2 = pres;
+
+            for(int j=0; j<k; j++) {
+                pres.next = prev;
+                prev = pres;
+                pres = next;
+                if (next != null) {
+                    next = next.next;
+                }
+            }
+
+            if (pivot1 != null) {
+                pivot1.next = prev;
+            }
+            pivot2.next = pres;
+            if (i == 0) {
+                head = prev;
+            }
+            prev = pivot2;
+        }
+
+        return head;
+    }
 }

@@ -11,6 +11,6 @@ public class LLMergeSort {
         obj.InsertFirst(1);
         obj.InsertFirst(78);
 
-        var temp = obj.LLMergeSort(obj.head);
+        //var temp = obj.LLMergeSort(obj.head);
     }
 }
