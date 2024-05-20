@@ -513,6 +513,8 @@ public class LL {
     public Node ReverseKGroup(Node node, int k) {
         int size = 0;
         Node temp = node;
+
+        //Get size
         while (temp != null) {
             size++;
             temp = temp.next;
@@ -545,6 +547,93 @@ public class LL {
             }
             prev = pivot2;
         }
+
+        return head;
+    }
+
+    // Input : 1->2->3->4->5->6->7
+    // Output : 2->1->3->4->6->5->7
+    // If k=2
+    public Node ReverseAlternateKGroup(Node node, int k) {
+        int size = 0;
+        Node temp = node;
+        while (temp != null) {
+            size++;
+            temp = temp.next;
+        }
+
+        int groups = size / k;
+        Node prev = null;
+        Node pres = node;
+        Node next = pres.next;
+
+        for(int i=0; i<groups; i+=2) {
+            Node pivot1 = prev;
+            Node pivot2 = pres;
+
+            for(int j=0; j<k; j++) {
+                pres.next = prev;
+                prev = pres;
+                pres = next;
+                if (next != null) {
+                    next = next.next;
+                }
+            }
+
+            if (pivot1 != null) {
+                pivot1.next = prev;
+            }
+            pivot2.next = pres;
+
+            if (i == 0) {
+                head = prev;
+            }
+            prev = pivot2;
+
+            // Move all pointers to next group that has to be reversed, but only if you are not already at the last group. Else, will get NPE
+            if (i < groups-1) {
+                for(int m=0; m<k; m++) {
+                    prev = prev.next;
+                    pres = pres.next;
+                    next = next.next;
+    
+                    pivot1 = prev;
+                    pivot2 = pres;
+                }
+            }
+        }
+
+        return head;
+    }
+
+    public Node RotateLL(Node node, int k) {
+        Node temp = node;
+        int size = 0;
+
+        while (temp != null) {
+            size++;
+            temp = temp.next;    
+        }
+
+        int rotationCount = k % size;
+        Node prev = null;
+        Node pres = node;
+        for (int i=0; i<size-rotationCount; i++) {
+            prev = prev == null ? node : prev.next;
+            pres = pres.next;
+        }
+
+        // No Rotation needed, i.e., k is 0 or multiples of size.
+        if (pres == null) {
+            return node;
+        }
+
+        head = pres;
+        prev.next = null;
+        while (pres.next != null) {
+            pres = pres.next;
+        }
+        pres.next = node;
 
         return head;
     }
