@@ -1,5 +1,6 @@
 package KK.BinarySearchPattern;
 
+// Largest number smaller than or equal to target.
 public class Floor {
     public static void main(String[] args) {
         int[] arr = new int[] {1,7,23,56,78,90,109,110,117};

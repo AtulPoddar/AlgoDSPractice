@@ -1,9 +1,10 @@
 package KK.BinarySearchPattern;
 
+// Smallest number greater than or equal to target.
 public class Cieling {
     public static void main(String[] args) {
         int[] arr = new int[] {1,7,23,56,78,90,109,110,117};
-        System.out.println(ceil(arr, 120));
+        System.out.println(ceil(arr, 112));
     }
 
     public static int ceil(int[] arr, int target) {

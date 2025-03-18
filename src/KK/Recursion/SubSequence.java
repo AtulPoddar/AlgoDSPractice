@@ -4,8 +4,12 @@ import java.util.ArrayList;
 
 public class SubSequence {
     public static void main(String[] args) {
-        var ls = subSeqList("", "rdx");
-        System.out.println(ls);
+        //var ls = subSeqList("", "rdx");
+        //System.out.println(ls);
+
+        var list = new ArrayList<String>();
+        subSeqLst("", "rdx", list);
+        System.out.println(list);
     }
 
     public static void subSeq(String p, String up) {
@@ -18,6 +22,18 @@ public class SubSequence {
 
         subSeq(p + ch, up.substring(1));
         subSeq(p, up.substring(1));
+    }
+
+    public static void subSeqLst(String p, String up, ArrayList<String> list) {
+        if (up.isEmpty()) {
+            list.add(p);
+            return;
+        }
+
+        char ch = up.charAt(0);
+
+        subSeqLst(p + ch, up.substring(1), list);
+        subSeqLst(p, up.substring(1), list);
     }
 
     public static ArrayList<String> subSeqList(String p, String up) {

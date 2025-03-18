@@ -1,18 +1,36 @@
 package KK.LinkedList;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
+
 public class main {
     public static void main(String[] args) {
-        LL obj = new LL();
+        var obj = new Test();
 
-        obj.InsertFirst(11);
-        obj.InsertFirst(13);
-        obj.InsertFirst(16);
-        obj.InsertFirst(18);
+        var tt = obj.getClass();
+        System.out.println(tt.toString());
 
-        //obj.InsertIndexRec1(33, 0, obj.head);
+        var ttt = obj instanceof Object;
+        System.out.println(ttt);
 
-        obj.InsertIndexRec2(33, 0);
+        Function<Integer, Integer> t = (y) -> y;
 
-        obj.Display();
+        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> "Hello ")
+            .thenApply((s) -> s + "World");
+        //ExecutorService ttt  = Executors.newFixedThreadPool();
+
+        HashSet<Integer> temppp = new HashSet<Integer>();
+        temppp.add(1);
+
+        HashMap<Integer, String> tr = new HashMap<Integer, String>();
+        tr.put(2, "dd");
+    }
+
+    public <T extends Number> void tttttt(T value, List<?> vk) {
+
     }
 }

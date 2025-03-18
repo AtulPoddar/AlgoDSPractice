@@ -3,7 +3,7 @@ package KK.Recursion.Backtracking;
 public class NKnights {
     public static void main(String[] args) {
         System.out.println("Hello");
-        int n=3;
+        int n=4;
         boolean[][] board = new boolean[n][n];
         print(board, 0, 0, n);
     }

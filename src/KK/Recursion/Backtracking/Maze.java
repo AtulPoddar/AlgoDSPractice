@@ -9,7 +9,7 @@ public class Maze {
 
         boolean[][] maze = {
             {true, true, true},
-            {false, true, true},
+            {true, true, true},
             {true, true, true}
         };
         
@@ -105,6 +105,8 @@ public class Maze {
             }
             System.out.println(p);
             System.out.println();
+
+            path[r][c] = 0;
             return;
         }
 
