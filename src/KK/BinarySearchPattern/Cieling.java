@@ -4,7 +4,7 @@ package KK.BinarySearchPattern;
 public class Cieling {
     public static void main(String[] args) {
         int[] arr = new int[] {1,7,23,56,78,90,109,110,117};
-        System.out.println(ceil(arr, 112));
+        System.out.println(ceil(arr, 118));
     }
 
     public static int ceil(int[] arr, int target) {

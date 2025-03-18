@@ -2,8 +2,8 @@ package KK.BinarySearchPattern;
 
 public class LetterCeiling {
     public static void main(String[] args) {
-        char[] arr = new char[] {'a', 'b', 'y'};
-        System.out.println(lCeil2(arr, 'd'));
+        char[] arr = new char[] {'a', 'b', 'c','d','e','p','y'};
+        System.out.println(lCeil(arr, 'z'));
     }
 
     public static char lCeil(char[] arr, char target) {
@@ -13,7 +13,10 @@ public class LetterCeiling {
         while (s<=e) {
             int m = s + (e-s)/2;
 
-            if (target < arr[m]) {
+            if (target == arr[m]) {
+                return arr[m];
+            }
+            else if (target < arr[m]) {
                 e = m-1;
             }
             else {
@@ -24,7 +27,7 @@ public class LetterCeiling {
         return arr[s % arr.length];
     }
 
-    public static char lCeil2(char[] arr, char target) {
+    /* public static char lCeil2(char[] arr, char target) {
         int s=0;
         int e=arr.length-1;
 
@@ -44,5 +47,5 @@ public class LetterCeiling {
         }
 
         return '0';
-    }
+    } */
 }
