@@ -2,12 +2,13 @@ package KK.BinarySearchPattern;
 
 public class MountainPeak {
     public static void main(String[] args) {
-        int[] arr = new int[] {1,2,3,3,3,3,5,6,7,8,9,4,3,3,3,3,3,3,3,3,2,1};
-        //System.out.println(find2(arr));
+        int[] arr = new int[] {1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,5,6,7,8,9,4,3,3,3,3,3,3,3,3,2,1};
+        System.out.println(find2(arr));
         //System.out.println(findTarget(arr, 57));
-        System.out.println(findTarget2(arr, 4));
+        //System.out.println(findTarget2(arr, 4));
     }
 
+    // Only if no repeated elements in the array
     public static int find(int[] arr) {
         int s=0;
         int e=arr.length-1;
@@ -30,6 +31,7 @@ public class MountainPeak {
         return -1;
     }
 
+    // In all cases - repeated or non-repeated elements in the array
     public static int find2(int[] arr) {
         int s=0;
         int e=arr.length-1;
@@ -45,7 +47,7 @@ public class MountainPeak {
             }
         }
 
-        return s;
+        return s;   // or e, basically both s and e will point to the peak element.
     }
 
     public static int findTarget(int[] arr, int target) {
