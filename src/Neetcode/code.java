@@ -1439,6 +1439,49 @@ public class code {
         return res;
     }
 
-    
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        while (!q.isEmpty()) {
+            int len = q.size();
+            while (len > 0) {
+                var elem = q.poll();
+                if (elem.left != null) {
+                    q.offer(elem.left);
+                }
+                if (elem.right != null) {
+                    q.offer(elem.right);
+                }
+                if (len == 1) {
+                    res.add(elem.val);
+                }
+
+                len--;
+            }
+        }
+
+        return res;
+    }
+
+    public int goodNodes(TreeNode root) {
+        return dfs2(root, root.val);
+    }
+
+    public int dfs2(TreeNode root, int max) {
+        if (root == null) {
+            return 0;
+        }
+
+        if (root.val >= max) {
+            return 1 + dfs2(root.left, root.val) + dfs2(root.right, root.val);
+        }
+
+        return dfs2(root.left, max) + dfs2(root.right, max);
+    }
 
 }
