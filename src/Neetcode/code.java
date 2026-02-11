@@ -1484,4 +1484,24 @@ public class code {
         return dfs2(root.left, max) + dfs2(root.right, max);
     }
 
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) 
+            return true;
+        return dfs3(root.left, root.val, Long.MIN_VALUE) 
+            && dfs3(root.right, Long.MAX_VALUE, root.val);
+    }
+
+    public boolean dfs3(TreeNode root, long max, long min) {
+        if (root == null) {
+            return true;
+        }
+
+        if (root.val <= min || root.val >= max) {
+            return false;
+        }
+
+        return dfs3(root.left, root.val, min) 
+            && dfs3(root.right, max, root.val);
+    }
+
 }
