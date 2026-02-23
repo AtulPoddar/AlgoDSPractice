@@ -7,11 +7,10 @@ import Neetcode.LinkedList.ListNode;
 
 public class code {
     public static void main(String[] args) {
-        var temp = longestCommonPrefix(new String[] {"bat","bag","bank","band"});
-        System.out.println(temp);
+        var temp = permute(new int[] {1,2,3});
     }
 
-    public class TreeNode {
+    public static class TreeNode {
       int val;
       TreeNode left;
       TreeNode right;
@@ -1502,6 +1501,284 @@ public class code {
 
         return dfs3(root.left, root.val, min) 
             && dfs3(root.right, max, root.val);
+    }
+
+    public static int kthSmallest(TreeNode root, int k) {
+        if (root == null) {
+            return 0;
+        }
+
+        int count[] = new int[1];
+        count[0] = 0;
+        TreeNode res[] = new TreeNode[1];
+        dfs4(root, k, count, res);
+        return res[0].val;
+    }
+
+    public static void dfs4(TreeNode root, int k, int[] count, TreeNode[] res) {
+        if (root == null) {
+            return;
+        }
+
+        dfs4(root.left, k, count, res);
+        if (count[0] + 1 == k) {
+            res[0] = root;
+        }
+        count[0]++;
+
+        dfs4(root.right, k, count, res);
+    }
+
+    int pre_idx = 0;
+    Map<Integer, Integer> map = new HashMap<>();
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+
+        return build(preorder, 0, inorder.length-1);
+    }
+
+    public TreeNode build(int[] preOrder, int l, int r) {
+        if (l > r) {
+            return null;
+        }
+
+        int root_val = preOrder[pre_idx++];
+        var root = new TreeNode(root_val);
+        var mid = map.get(root_val);
+
+        root.left = build(preOrder, l, mid-1);
+        root.right = build(preOrder, mid+1, r);
+
+        return root;
+    }
+
+    static int max = 0;
+    public static int maxPathSum(TreeNode root) {
+        max = root.val;
+        dfs5(root);
+        return max;
+    }
+
+    public static int dfs5(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        int left = dfs5(root.left);
+        int right = dfs5(root.right);
+
+        int maxVal1 = Math.max(root.val + left, root.val + right);
+        int maxVal2 = Math.max(maxVal1, root.val);
+        int maxVal3 = Math.max(root.val + left + right, maxVal2);
+
+        max = Math.max(max, maxVal3);
+
+        return maxVal2;
+    }
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        if (root == null) {
+            return "N";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+
+        while (!q.isEmpty()) {
+            var elem = q.poll();
+            if (elem == null) {
+                sb.append("N,");
+            }
+            else {
+                sb.append(elem.val + ",");
+                q.offer(elem.left);
+                q.offer(elem.right);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        if (data.equals("N")) {
+            return null;
+        }
+
+        String[] elems = data.split(",");
+        var root = new TreeNode(Integer.parseInt(elems[0]));
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        int index = 1;
+
+        while (!q.isEmpty()) {
+            var elem = q.poll();
+
+            var left = elems[index++];
+            if (!left.equals("N") && !left.isEmpty()) {
+                elem.left = new TreeNode(Integer.parseInt(left));
+                q.offer(elem.left);
+            }
+
+            var right = elems[index++];
+            if (!right.equals("N") && !right.isEmpty()) {
+                elem.right = new TreeNode(Integer.parseInt(right));
+                q.offer(elem.right);
+            }
+        }
+
+        return root;
+    }
+
+// ------------------------------- BackTracking ------------------------------------------
+
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        createSet(0, nums, new ArrayList<Integer>(), res);
+        return res;
+    }
+
+    public void createSet(int i, int[] nums, List<Integer> curr, List<List<Integer>> res) {
+        if (i == nums.length) {
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+
+        curr.add(nums[i]);
+        createSet(i+1, nums, curr, res);
+        curr.remove(curr.size() - 1);
+
+        createSet(i+1, nums, curr, res);
+    }
+
+    public List<List<Integer>> combinationSum(int[] nums, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(nums);
+        cSum(0, nums, target, 0, new ArrayList<Integer>(), res);
+        return res;
+    }
+
+    public void cSum(int start, int[] nums, int target, int sum, List<Integer> curr, List<List<Integer>> resList) {
+        if (sum == target) {
+            resList.add(new ArrayList<>(curr));
+            return;
+        }
+
+        for (int i = start; i < nums.length; i++) {
+            if (sum + nums[i] > target) {
+                continue;
+            }
+
+            curr.add(nums[i]);
+            cSum(i, nums, target, sum+nums[i], curr, resList);
+            curr.remove(curr.size() - 1);
+        }
+    }
+
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(candidates);
+        cSum2(0, candidates, target, 0, new ArrayList<Integer>(), res);
+        return res;
+    }
+
+    public void cSum2(int start, int[] nums, int target, int sum, List<Integer> curr, List<List<Integer>> resList) {
+        if (sum == target) {
+            resList.add(new ArrayList<>(curr));
+            return;
+        }
+
+        for (int i = start; i < nums.length; i++) {
+
+            if (i > start && nums[i] == nums[i-1]) {
+                continue;
+            }
+
+            if (sum + nums[i] > target) {
+                continue;
+            }
+
+            curr.add(nums[i]);
+            cSum2(i+1, nums, target, sum+nums[i], curr, resList);
+            curr.remove(curr.size() - 1);
+        }
+    }
+
+    public static List<List<Integer>> permute(int[] nums) {
+        return permHelper(nums, 0);
+    }
+
+    public static List<List<Integer>> permHelper(int[] nums, int index) {
+        if (index == nums.length) {
+            List<List<Integer>> ans = new ArrayList<>();
+            ans.add(new ArrayList<>());
+            return ans;
+        }
+
+        var temp = permHelper(nums, index+1);
+        List<List<Integer>> res = new ArrayList<>();
+        for (List<Integer> list : temp) {
+            for (int i = 0; i <= list.size(); i++) {
+                var p = new ArrayList<>(list);
+                p.add(i, nums[index]);
+                res.add(p);
+            }
+        }
+
+        return res;
+    }
+
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(nums);
+        subDupHelper(nums, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    public void subDupHelper(int[] nums, int index, List<Integer> curr, List<List<Integer>> res) {
+        if (index == nums.length) {
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+
+        curr.add(nums[index]);
+        subDupHelper(nums, index+1, curr, res);
+        curr.remove(curr.size()-1);
+
+        while (index+1 < nums.length && nums[index] == nums[index+1]) {
+            index++;
+        }
+        subDupHelper(nums, index+1, curr, res);
+    }
+
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        paranHelper(n, 0, 0, sb, res);
+        return res;
+    }
+
+    public void paranHelper(int n, int open, int close, StringBuilder sb, List<String> res) {
+        if (open == close && open == n) {
+            res.add(sb.toString());
+            return;
+        }
+
+        if (open < n) {
+            sb.append("(");
+            paranHelper(n, open+1, close, sb, res);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        
+        if (open > close) {
+            sb.append(")");
+            paranHelper(n, open, close+1, sb, res);
+            sb.deleteCharAt(sb.length() - 1);
+        }
     }
 
 }
