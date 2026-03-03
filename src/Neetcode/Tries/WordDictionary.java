@@ -1,4 +1,4 @@
-package Neetcode;
+package Neetcode.Tries;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package Neetcode;
+package Neetcode.Heaps;
 
 import java.util.*;
 
