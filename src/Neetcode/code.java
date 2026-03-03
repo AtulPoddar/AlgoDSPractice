@@ -1781,4 +1781,349 @@ public class code {
         }
     }
 
+    public boolean exist(char[][] board, String word) {
+        HashSet<String> set = new HashSet<>();
+        int row = board.length;
+        int col = board[0].length;
+
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                if (board[r][c] == word.charAt(0) && dfs6(r, c, board, word, 0, set)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean dfs6(int r, int c, char[][] board, String word, int index, HashSet<String> set) {
+        String pos = r + "," + c;
+        if (r < 0 || c < 0 || r >= board.length || c >= board[0].length || set.contains(pos) || word.charAt(index) != board[r][c]) {
+            return false;
+        }
+
+        if (index == word.length()-1) {
+            return true;
+        }
+
+        set.add(pos);
+
+        boolean res = dfs6(r+1, c, board, word, index+1, set)
+                        || dfs6(r, c+1, board, word, index+1, set)
+                        || dfs6(r-1, c, board, word, index+1, set)
+                        || dfs6(r, c-1, board, word, index+1, set);
+
+        set.remove(pos);
+
+        return res;
+    }
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.equals("")) {
+            return new ArrayList<>();
+        }
+        HashMap<String, String[]> map = new HashMap<>();
+        map.put("2", new String[] {"a","b","c"});
+        map.put("3", new String[] {"d","e","f"});
+        map.put("4", new String[] {"g","h","i"});
+        map.put("5", new String[] {"j","k","l"});
+        map.put("6", new String[] {"m","n","o"});
+        map.put("7", new String[] {"p","q","r","s"});
+        map.put("8", new String[] {"t","u","v"});
+        map.put("9", new String[] {"w","x","y","z"});
+
+        List<String> res = new ArrayList<>();
+        combHelper(digits, new StringBuilder(), res, 0, map);
+        return res;
+    }
+
+    public void combHelper(String digits, StringBuilder curr, List<String> res, int index, HashMap<String,String[]> map) {
+        if (curr.length() == digits.length()) {
+            res.add(curr.toString());
+            return;
+        }
+
+        String key = Character.toString(digits.charAt(index));
+        var arr = map.get(key);
+        for (int i = 0; i < arr.length; i++) {
+            curr.append(arr[i]);
+            combHelper(digits, curr, res, index + 1, map);
+            curr.deleteCharAt(curr.length()-1);
+        }
+    }
+
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> res = new ArrayList<>();
+        Character[][] board = new Character[n][n];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                board[i][j] = '.';
+            }
+        }
+        queenHelper(n, 0, res, board);
+
+        return res;
+    }
+
+    public void queenHelper(int n, int r, List<List<String>> res, Character[][] board) {
+        if (r == n) {
+            res.add(output(board));
+            return;
+        }
+
+        for (int c = 0; c < n; c++) {
+            if (isValidBoard(r, c, board)) {
+                board[r][c] = 'Q';
+                queenHelper(n, r+1, res, board);
+                board[r][c] = '.';
+            }
+        }
+    }
+
+    public boolean isValidBoard(int r, int c, Character[][] board) {
+        for (int i = r-1; i >= 0; i--) {
+            if (board[i][c] == 'Q') {
+                return false;
+            }
+        }
+        for (int i = r-1, j = c-1; i >= 0 && j >= 0; i--,j--) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+        for (int i = r-1, j = c+1; i >= 0 && j < board.length; i--,j++) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<String> output(Character[][] board) {
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < board.length; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < board[i].length; j++) {
+                sb.append(board[i][j]);
+            }
+
+            res.add(sb.toString());
+        }
+
+        return res;
+    }
+
+    public class TrieNode {
+        Map<Character, TrieNode> children;
+        boolean word;
+
+        public TrieNode() {
+            children = new HashMap<>();
+        }
+
+        public void addWord(String word) {
+            TrieNode curr = this;
+            for (int i = 0; i < word.length(); i++) {
+                if (!curr.children.containsKey(word.charAt(i))) {
+                    curr.children.put(word.charAt(i), new TrieNode());
+                }
+
+                curr = curr.children.get(word.charAt(i));
+            }
+
+            curr.word = true;
+        }
+    }
+
+    public List<String> findWords(char[][] board, String[] words) {
+        Set<String> res = new HashSet<>();
+        int r = board.length;
+        int c = board[0].length;
+        HashSet<String> set = new HashSet<>();
+
+        TrieNode root = new TrieNode();
+        for (String word : words) {
+            root.addWord(word);
+        }
+
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                findWordsHelper(i, j, board, set, root, res, "");
+            }
+        }
+
+        return new ArrayList<>(res);
+    }
+
+    public void findWordsHelper(int r, int c, char[][] board, HashSet<String> set, TrieNode root, Set<String> res, String word) {
+        String pos = r + "," + c;
+        if (r < 0 || c < 0 || r >= board.length || c >= board[0].length || set.contains(pos) || !root.children.containsKey(board[r][c])) {
+            return;
+        }
+
+        root = root.children.get(board[r][c]);
+        word += board[r][c];
+        if (root.word) {
+            res.add(word);
+        }
+
+        set.add(pos);
+
+        findWordsHelper(r+1, c, board, set, root, res, word);
+        findWordsHelper(r, c+1, board, set, root, res, word);
+        findWordsHelper(r, c-1, board, set, root, res, word);
+        findWordsHelper(r-1, c, board, set, root, res, word);
+
+        set.remove(pos);
+    }
+
+    public int lastStoneWeight(int[] stones) {
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        for (Integer stone : stones) {
+            maxHeap.offer(stone);
+        }
+
+        while (!maxHeap.isEmpty()) {
+            var stone1 = maxHeap.poll();
+            if (maxHeap.size() >= 1) {
+                var stone2 = maxHeap.poll();
+                var diff = stone1 - stone2;
+                if (diff > 0) {
+                    maxHeap.offer(diff);
+                }
+            }
+            else {
+                return stone1;
+            }
+        }
+
+        return 0;
+    }
+
+    public class Pair2<K,V> {
+        public K val1;
+        public V val2;
+
+        public Pair2(K val1, V val2) {
+            this.val1 = val1;
+            this.val2 = val2;
+        }
+
+        public K getVal1() {
+            return val1;
+        }
+
+        public V getVal2() {
+            return val2;
+        }
+    }
+
+    public int[][] kClosest(int[][] points, int k) {
+        PriorityQueue<Pair2<Double, int[]>> maxHeap = new PriorityQueue<>((a,b) -> Double.compare(b.getVal1(), a.getVal1()));
+        for (int i = 0; i < points.length; i++) {
+            var val = points[i];
+            var x = val[0];
+            var y = val[1];
+
+            var dist = Math.sqrt((x*x) + (y*y));
+            maxHeap.offer(new Pair2<>(dist, val));
+            if (maxHeap.size() > k) {
+                maxHeap.poll();
+            }
+        }
+
+        int[][] res = new int[k][2];
+        int i = 0;
+        while (!maxHeap.isEmpty()) {
+            var val = maxHeap.poll().val2;
+            res[i++] = new int[] {val[0], val[1]};
+        }
+
+        return res;
+    }
+
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        for (Integer num : nums) {
+            minHeap.offer(num);
+            if (minHeap.size() > k) {
+                minHeap.poll();
+            }
+        }
+
+        return minHeap.peek();
+    }
+
+    public int leastInterval(char[] tasks, int n) {
+        int[] count = new int[26];
+        for (char ch : tasks) {
+            count[ch - 'A']++;
+        }
+
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        for (int c : count) {
+            if (c > 0) {
+                maxHeap.offer(c);
+            }
+        }
+
+        int time = 0;
+        Queue<int[]> q = new LinkedList<>();
+        while (!q.isEmpty() || !maxHeap.isEmpty()) {
+            time++;
+
+            if (!maxHeap.isEmpty()) {
+                var val = maxHeap.poll() - 1;
+                if (val > 0) {
+                    q.offer(new int[] {val, time + n});
+                }
+            }
+            else {
+                // This is to reduce the number of loops if heap is empty and q items are not ready to be moved to heap
+                time = q.peek()[1];
+            }
+
+            if (!q.isEmpty() && q.peek()[1] == time) {
+                maxHeap.offer(q.poll()[0]);
+            }
+        }
+
+        return time;
+    }
+
+    public int numIslands(char[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        int islands = 0;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == '1') {
+                    islandHelper(grid, r, c);
+                    islands++;
+                }
+            }
+        }
+
+        return islands;
+    }
+
+    public void islandHelper(char[][] grid, int r, int c) {
+        if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] == '0') {
+            return;
+        }
+
+        grid[r][c] = '0';
+
+        islandHelper(grid, r+1, c);
+        islandHelper(grid, r-1, c);
+        islandHelper(grid, r, c+1);
+        islandHelper(grid, r, c-1);
+
+        return;
+    }
+
+    
 }
