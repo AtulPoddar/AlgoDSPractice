@@ -289,4 +289,86 @@ public class algos {
 
         return res;
     }
+
+    public int totalNQueens(int n) {
+        Character[][] board = new Character[n][n];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                board[i][j] = '.';
+            }
+        }
+        return totalNQueensHelper(board, 0);
+    }
+
+    public int totalNQueensHelper(Character[][] board, int r) {
+        if (r == board.length) {
+            return 1;
+        }
+
+        int count = 0;
+        for (int c = 0; c < board.length; c++) {
+            if (isValidQueensBoard(board, r, c)) {
+                board[r][c] = 'Q';
+                count += totalNQueensHelper(board, r+1);
+                board[r][c] = '.';
+            }
+        }
+
+        return count;
+    }
+
+    public boolean isValidQueensBoard(Character[][] board, int r, int c) {
+        for (int i = 0; i < r; i++) {
+            if (board[i][c] == 'Q') {
+                return false;
+            }
+        }
+        for (int i = r-1,j=c-1; i>=0 && j>=0; i--,j--) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+        for (int i = r-1,j=c+1; i>=0 && j<board.length; i--,j++) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<List<String>> partition(String s) {
+        List<List<String>> res = new ArrayList<>();
+        partitionHelper(s, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    public void partitionHelper(String s, int index, List<String> curr, List<List<String>> res) {
+        if (index == s.length()) {
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+
+        for (int i = index; i < s.length(); i++) {
+            String subString = s.substring(index, i+1);
+            if (isPalindrome(subString)) {
+                curr.add(subString);
+                partitionHelper(s, i+1, curr, res);
+                curr.remove(curr.size()-1);
+            }
+        }
+    }
+
+    public boolean isPalindrome(String s) {
+        int l = 0;
+        int r = s.length()-1;
+        while (l < r) {
+            if (s.charAt(l++) != s.charAt(r--)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
 }

@@ -15,9 +15,9 @@ public class algos {
     }
 
     public static class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
+      public int val;
+      public TreeNode left;
+      public TreeNode right;
       TreeNode() {}
       TreeNode(int val) { this.val = val; }
       TreeNode(int val, TreeNode left, TreeNode right) {
@@ -718,5 +718,64 @@ public class algos {
         }
 
         return root;
+    }
+
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        if (root == null) {
+            return new TreeNode(val);
+        }
+
+        if (val > root.val) {
+            root.right = insertIntoBST(root.right, val);
+        }
+        else {
+            root.left = insertIntoBST(root.left, val);
+        }
+
+        return root;
+    }
+
+    // Recursive
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        postOrderHelper(root, res);
+
+        return res;
+    }
+
+    public void postOrderHelper(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+
+        postOrderHelper(root.left, res);
+        postOrderHelper(root.right, res);
+        res.add(root.val);
+    }
+
+    // Iterative
+    public List<Integer> postorderTraversal2(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        Stack<Pair<TreeNode,Boolean>> stk = new Stack<>();
+        stk.push(new Pair<>(root, false));
+        List<Integer> res = new ArrayList<>();
+
+        while (!stk.isEmpty()) {
+            var elem = stk.pop();
+            if (elem.getKey() != null) {
+                if (elem.getValue()) {
+                    res.add(elem.getKey().val);
+                }
+                else {
+                    stk.push(new Pair<>(elem.getKey(), true));
+                    stk.push(new Pair<>(elem.getKey().right, false));
+                    stk.push(new Pair<>(elem.getKey().left, false));
+                }
+            }
+        }
+
+        return res;
     }
 }

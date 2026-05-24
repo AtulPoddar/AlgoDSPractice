@@ -7,7 +7,7 @@ import Neetcode.LinkedList.ListNode;
 
 public class code {
     public static void main(String[] args) {
-        //var temp = permute(new int[] {1,2,3});
+        var temp = simplifyPath("/neetcode/practice//...///../courses");
     }
 
     public static boolean isAnagram(String s, String t) {
@@ -928,7 +928,320 @@ public class code {
         return result;
     }
 
-    
+    public int minSubArrayLen(int target, int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
 
+        int l = 0;
+        int minLength = Integer.MAX_VALUE;
+        int sum = 0;
+        for (int r = 0; r < nums.length; r++) {
+            sum += nums[r];
+            while (sum >= target) {
+                minLength = Math.min(minLength, r-l+1);
+                sum -= nums[l];
+                l++;
+            }
+        }
 
+        return minLength == Integer.MAX_VALUE ? 0 : minLength;
+    }
+
+    public int subarraySum(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        int n = nums.length;
+        Map<Integer,Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int prefixSum = 0;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            prefixSum += nums[i];
+            int need = prefixSum - k;
+
+            if (map.containsKey(need)) {
+                count += map.get(need);
+            }
+            map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);
+        }
+
+        return count;
+    }
+
+    public static class Pair2<K,V> {
+        public K val1;
+        public V val2;
+
+        public Pair2(K val1, V val2) {
+            this.val1 = val1;
+            this.val2 = val2;
+        }
+
+        public K getVal1() {
+            return val1;
+        }
+
+        public V getVal2() {
+            return val2;
+        }
+    }
+
+    // Longest Happy String
+    public static String longestDiverseString(int a, int b, int c) {
+        PriorityQueue<Pair2<Character,Integer>> maxHeap = new PriorityQueue<>((x,y) -> y.val2 - x.val2);
+        if (a > 0) {
+            maxHeap.offer(new Pair2<>('a', a));
+        }
+        if (b > 0) {
+            maxHeap.offer(new Pair2<>('b', b));
+        }
+        if (c > 0) {
+            maxHeap.offer(new Pair2<>('c', c));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Character lastChar = null;
+        Character secondLastChar = null;
+        while (!maxHeap.isEmpty()) {
+            var maxPeek = maxHeap.peek();
+            if ((lastChar == null || secondLastChar == null) || (lastChar != maxPeek.val1 || secondLastChar != maxPeek.val1)) {
+                var elem1 = maxHeap.poll();
+                sb.append(elem1.val1);
+                var temp = lastChar;
+                lastChar = elem1.val1;
+                secondLastChar = temp;
+                if (elem1.val2 - 1 > 0) {
+                    maxHeap.offer(new Pair2<>(elem1.val1, elem1.val2 - 1));
+                }
+            }
+            else {
+                var elem1 = maxHeap.poll();
+                if (maxHeap.isEmpty()) {
+                    break;
+                }
+                var elem2 = maxHeap.poll();
+                sb.append(elem2.val1);
+                if (elem2.val2 - 1 > 0) {
+                    maxHeap.offer(new Pair2<>(elem2.val1, elem2.val2-1));
+                }
+                maxHeap.offer(elem1);
+                var temp = lastChar;
+                lastChar = elem2.val1;
+                secondLastChar = temp;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // Word Break 2 (Backtracking)
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        HashSet<String> set = new HashSet<>(wordDict);
+        List<String> res = new ArrayList<>();
+        wordBreakHelper(s, 0, new ArrayList<>(), set, res);
+        return res;
+    }
+
+    public void wordBreakHelper(String s, int i, List<String> curr, HashSet<String> wordSet, List<String> res) {
+        if (i == s.length()) {
+            res.add(String.join(" ", curr));
+            return;
+        }
+
+        for (int j = i; j < s.length(); j++) {
+            var sub = s.substring(i, j+1);
+            if (wordSet.contains(sub)) {
+                curr.add(sub);
+                wordBreakHelper(s, j+1, curr, wordSet, res);
+                curr.remove(curr.size()-1);
+            }
+        }
+    }
+
+    public class TrieNode {
+        public Map<Character,TrieNode> children;
+        public boolean isWord;
+
+        public TrieNode() {
+            children = new HashMap<>();
+            isWord = false;
+        }
+
+        public void addWord(String word) {
+            TrieNode curr = this;
+            for (Character ch : word.toCharArray()) {
+                if (!curr.children.containsKey(ch)) {
+                    curr.children.put(ch, new TrieNode());
+                }
+
+                curr = curr.children.get(ch);
+            }
+            curr.isWord = true;
+        }
+    }
+
+    // Word Break 2 (Trie+BackTracking)
+    public List<String> wordBreak2(String s, List<String> wordDict) {
+        TrieNode root = new TrieNode();
+        for (String w : wordDict) {
+            root.addWord(w);
+        }
+
+        List<String> res = new ArrayList<>();
+        wbHelper(s, 0, new ArrayList<>(), root, res);
+        return res;
+    }
+
+    public void wbHelper(String s, int i, List<String> curr, TrieNode root, List<String> res) {
+        if (i == s.length()) {
+            res.add(String.join(" ", curr));
+            return;
+        }
+
+        TrieNode node = root;
+        StringBuilder word = new StringBuilder();
+        for (int j = i; j < s.length(); j++) {
+            var ch = s.charAt(j);
+            if (!node.children.containsKey(ch)) {
+                break;
+            }
+            node = node.children.get(ch);
+            word.append(ch);
+            if (node.isWord) {
+                curr.add(word.toString());
+                wbHelper(s, j+1, curr, root, res);
+                curr.remove(curr.size()-1);
+            }
+        }
+    }
+
+    // Combinations
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> res = new ArrayList<>();
+        combineHelper(n, k, 1, new ArrayList<>(), res);
+        return res;
+    }
+
+    public void combineHelper(int n, int k, int i, List<Integer> curr, List<List<Integer>> res) {
+        if (curr.size() == k) {
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+
+        for (int j = i; j <= n; j++) {
+            curr.add(j);
+            combineHelper(n, k, j+1, curr, res);
+            curr.remove(curr.size()-1);
+        }
+    }
+
+    public int mySqrt(int x) {
+        int l = 0;
+        int r = x;
+        int res = 0;
+
+        while (l <= r) {
+            int m = l + (r-l)/2;
+            long mul = (long) m * m;
+            if (mul > x) {
+                r = m-1;
+            }
+            else if (mul < x) {
+                l = m+1;
+                res = m;
+            }
+            else {
+                return m;
+            }
+        }
+
+        return res;
+    }
+
+    public int removeDuplicates(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        int k = 0;
+        int l = 0;
+        int r = 0;
+        int n = nums.length;
+        while (r < n) {
+            k++;
+            while (r < n && nums[r] == nums[l]) {
+                r++;
+            }
+            if (r == n) {
+                return k;
+            }
+
+            l++;
+            nums[l] = nums[r];
+        }
+
+        return k;
+    }
+
+    public void sortColors(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+
+        int l = 0;
+        int r = nums.length - 1;
+        int i = 0;
+        while (i <= r) {
+            if (nums[i] == 0) {
+                swap(nums, i, l);
+                l++;
+                i++;
+            }
+            else if (nums[i] == 2) {
+                swap(nums, i, r);
+                r--;
+            }
+            else {
+                i++;
+            }
+        }
+    }
+
+    public void swap(int[] nums, int l, int r) {
+        int temp = nums[l];
+        nums[l] = nums[r];
+        nums[r] = temp;
+    }
+
+    public static String simplifyPath(String path) {
+        if (path.isEmpty() || path.equals("/")) {
+            return path;
+        }
+
+        Stack<String> stk = new Stack<>();
+        var paths = path.split("/");
+        for (String str : paths) {
+            if (str.isEmpty() || str.equals(".")) {
+                continue;
+            }
+
+            if (str.equals("..")) {
+                if (!stk.isEmpty()) {
+                    stk.pop();
+                }
+                continue;
+            }
+
+            stk.push(str);
+        }
+
+        if (stk.isEmpty()) {
+            return "/";
+        }
+
+        return "/" + String.join("/", stk);
+    }
 }
