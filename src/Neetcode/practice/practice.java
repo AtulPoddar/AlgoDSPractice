@@ -15,7 +15,9 @@ import Neetcode.Trees.algos.TreeNode;
 
 public class practice {
     public static void main(String[] args) {
-        var res = lengthOfLongestSubstring("abcabcbb");
+        var res = new WordDictionary();
+        res.addWord("dog");
+        res.search("dog");
     }
 
     public static int[] twoSum(int[] nums, int target) {
@@ -587,4 +589,83 @@ public class practice {
         return nums[l];
     }
 
+    //Search in Rotated Sorted Array
+    public int search(int[] nums, int target) {
+        int minIndex = findMinIndex(nums);
+        var res = binSearchIndex(nums, target, 0, minIndex-1);
+        if (res == -1) {
+            res = binSearchIndex(nums, target, minIndex, nums.length - 1);
+        }
+
+        return res;
+    }
+
+    public int findMinIndex(int[] nums) {
+        int l = 0;
+        int r = nums.length - 1;
+
+        while (l <= r) {
+            int m = l + (r-l) / 2;
+            if (m > 0 && nums[m] < nums[m-1]) {
+                return m;
+            }
+            if (nums[m] > nums[r]) {
+                l = m+1;
+            }
+            else {
+                r = m-1;
+            }
+        }
+
+        return l;
+    }
+
+    public int binSearchIndex(int[] nums, int target, int l, int r) {
+        while (l <= r) {
+            int m = l + (r-l) / 2;
+            if (nums[m] == target) {
+                return m;
+            }
+            if (target > nums[m]) {
+                l = m+1;
+            }
+            else
+            {
+                r = m-1;
+            }
+        }
+        
+        return -1;
+    }
+
+    //Number of Islands
+    public int numIslands(char[][] grid) {
+        int r = grid.length;
+        int c = grid[0].length;
+
+        int count = 0;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (grid[i][j] == '1') {
+                    numIslandsHelper(grid, i, j);
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public void numIslandsHelper(char[][] grid, int r, int c) {
+        if (r >= grid.length || c >= grid[0].length || r < 0 || c < 0 || grid[r][c] == '0') {
+            return;
+        }
+
+        grid[r][c] = '0';
+
+        numIslandsHelper(grid, r+1, c);
+        numIslandsHelper(grid, r, c+1);
+        numIslandsHelper(grid, r-1, c);
+        numIslandsHelper(grid, r, c-1);
+    }
 }
