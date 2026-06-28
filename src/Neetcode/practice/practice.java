@@ -668,4 +668,131 @@ public class practice {
         numIslandsHelper(grid, r-1, c);
         numIslandsHelper(grid, r, c-1);
     }
+
+    //Course Schedule
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if (numCourses == 1 || prerequisites == null || prerequisites.length == 0) {
+            return true;
+        }
+
+        var map = new HashMap<Integer, List<Integer>>();
+        for (int[] pre : prerequisites) {
+            map.computeIfAbsent(pre[0], k -> new ArrayList<>()).add(pre[1]);
+        }
+
+        var keySet = map.keySet();
+        for (Integer key : keySet) {
+            if (!canFinishHelper(map, key, new HashSet<Integer>())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean canFinishHelper(HashMap<Integer, List<Integer>> map, int course, HashSet<Integer> visited) {
+        if (visited.contains(course)) {
+            return false;
+        }
+
+        var deps = map.get(course);
+        if (deps == null || deps.isEmpty()) {
+            return true;
+        }
+
+        visited.add(course);
+        for (Integer dep : deps) {
+            if (!canFinishHelper(map, dep, visited)) {
+                return false;
+            }
+        }
+
+        map.get(course).clear();
+        visited.remove(course);
+        return true;
+    }
+
+    //Course Schedule
+    public boolean canFinish2(int numCourses, int[][] prerequisites) {
+        if (numCourses == 1 || prerequisites == null || prerequisites.length == 0) {
+            return true;
+        }
+
+        var map = new HashMap<Integer,Integer>();
+        var map2 = new HashMap<Integer,List<Integer>>();
+        for (int i = 0; i < numCourses; i++) {
+            map.put(i, 0);
+        }
+        for (int[] pre : prerequisites) {
+            map.put(pre[0], map.get(pre[0]) + 1);
+            map2.computeIfAbsent(pre[1], k -> new ArrayList<>()).add(pre[0]);
+        }
+
+        HashSet<Integer> res = new HashSet<>();
+        Queue<Integer> q = new LinkedList<>();
+        var entrySet = map.entrySet();
+        for (var entry : entrySet) {
+            if (entry.getValue() == 0) {
+                q.offer(entry.getKey());
+            }
+        }
+        while (!q.isEmpty()) {
+            var elem = q.poll();
+            res.add(elem);
+            var deps = map2.get(elem);
+            if (deps == null) {
+                continue;
+            }
+
+            for (Integer dep : deps) {
+                map.put(dep, map.get(dep) - 1);
+                if (map.get(dep) == 0) {
+                    q.offer(dep);
+                }
+            }
+        }
+
+        return res.size() == numCourses;
+    }
+
+    //Top K Frequent Elements
+    public int[] topKFrequent(int[] nums, int k) {
+        int n = nums.length;
+        List<Integer>[] arr = new List[n+1];
+        var map = new HashMap<Integer,Integer>();
+        for (int num : nums) {
+            if (map.containsKey(num)) {
+                map.put(num, map.get(num)+1);
+            }
+            else {
+                map.put(num, 1);
+            }
+        }
+
+        var entrySet = map.entrySet();
+        for (var entry : entrySet) {
+            if (arr[entry.getValue()] == null) {
+                arr[entry.getValue()] = new ArrayList<>();
+            }
+            arr[entry.getValue()].add(entry.getKey());
+        }
+
+        int[] res = new int[k];
+        int j = 0;
+        for (int i = n; i > 0; i--) {
+            if (arr[i] == null || arr[i].isEmpty()) {
+                continue;
+            }
+            for (int val : arr[i]) {
+                res[j++] = val;
+                k--;
+                if (k == 0) {
+                    return res;
+                }
+            }
+        }
+
+        return res;
+    }
+
 }
