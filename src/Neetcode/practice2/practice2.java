@@ -1,10 +1,12 @@
 package Neetcode.practice2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -12,7 +14,7 @@ import java.util.Stack;
 
 public class practice2 {
     public static void main(String[] args) {
-        
+        var res = lengthOfLongestSubstring("bbbbb");
     }
 
     public class TreeNode {
@@ -417,7 +419,7 @@ public class practice2 {
         return resHead.next;
     }
 
-    /////.  Medium problems ///////////////
+    /////  Medium problems ///////////////
     
     // Valid Binary Search Tree
     public boolean isValidBST(TreeNode root) {
@@ -460,5 +462,118 @@ public class practice2 {
         return head;
     }
 
+    // Generate Parentheses
+    public List<String> generateParenthesis(int n) {
+        if (n == 1) {
+            var res = new ArrayList<String>();
+            res.add("()");
+            return res;
+        }
+
+        StringBuilder curr = new StringBuilder();
+        List<String> res = new ArrayList<>();
+        genParanHelper(curr, res, n, 0, 0);
+
+        return res;
+    }
+
+    public void genParanHelper(StringBuilder curr, List<String> res, int n, int open, int close) {
+        if (open > n || close > n || close > open) {
+            return;
+        }
+        if (curr.length() == 2*n) {
+            res.add(curr.toString());
+            return;
+        }
+
+        curr.append("(");
+        genParanHelper(curr, res, n, open+1, close);
+        curr.deleteCharAt(curr.length() - 1);
+
+        curr.append(")");
+        genParanHelper(curr, res, n, open, close+1);
+        curr.deleteCharAt(curr.length() - 1);
+    }
+
+    // Longest Substring Without Repeating Characters
+    public static int lengthOfLongestSubstring(String s) {
+        if (s.length() == 0) {
+            return 0;
+        }
+        if (s.length() == 1) {
+            return 1;
+        }
+
+        int l = 0;
+        int r = 1;
+        HashSet<Character> set = new HashSet<>();
+        set.add(s.charAt(l));
+        int res = 1;
+
+        while (r < s.length()) {
+            while (r < s.length() && !set.contains(s.charAt(r))) {
+                res = Math.max(r-l+1, res);
+                set.add(s.charAt(r));
+                r++;
+            }
+
+            if (r >= s.length()) {
+                break;
+            }
+            while (l < r && set.contains(s.charAt(r))) {
+                set.remove(s.charAt(l));
+                l++;
+            }
+        }
+
+        return res;
+    }
+
+    // Top K Frequent Elements
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> countMap = new HashMap<>();
+        int maxCount = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (countMap.containsKey(nums[i])) {
+                int newCount = countMap.get(nums[i]) + 1;
+                maxCount = Math.max(maxCount, newCount);
+                countMap.put(nums[i], newCount);
+            }
+            else {
+                countMap.put(nums[i], 1);
+                maxCount = Math.max(maxCount, 1);
+            }
+        }
+
+        List<Integer>[] ls = new List[maxCount+1];
+        var entrySet = countMap.entrySet();
+        for (var entry : entrySet) {
+            if (ls[entry.getValue()] == null) {
+                ls[entry.getValue()] = new ArrayList<>();
+            }
+            ls[entry.getValue()].add(entry.getKey());
+        }
+
+        int[] res = new int[k];
+        int l = 0;
+        for (int i = ls.length - 1; i >= 0; i--) {
+            if (ls[i] == null || ls[i].isEmpty()) {
+                continue;
+            }
+            for (int m : ls[i]) {
+                res[l++] = m;
+                if (l == k) {
+                    break;
+                }
+            }
+            if (l == k) {
+                break;
+            }
+        }
+
+        return res;
+    }
+
     
+
 }
